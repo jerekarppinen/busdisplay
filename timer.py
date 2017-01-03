@@ -3,6 +3,8 @@ from tkinter.font import Font
 from time import sleep
 import requests
 
+# base logic for this inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
+
 def update_txt(event = None):
     r = requests.get(url='http://10.10.15.50/bus.php?')
     data = r.json()
