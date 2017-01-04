@@ -1,6 +1,8 @@
 <?php
 
-$url = "http://api.reittiopas.fi/hsl/prod/?request=stop&code=1491123&user=x&pass=x";
+include("../globals.php");
+
+$url = "http://api.reittiopas.fi/hsl/prod/?request=stop&code=1491123&user=" . $user . "&pass=" . $pass;
 
 $response = json_decode(file_get_contents($url));
 $departures = $response[0]->departures;
