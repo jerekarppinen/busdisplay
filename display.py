@@ -32,8 +32,6 @@ def update_txt(event = None):
 
     reversedData = reversed(data)
 
-    myFont = Font(size=32)
-
     txt.configure(background='black')
 
     txt.tag_configure("old", foreground="yellow")
@@ -47,7 +45,7 @@ def update_txt(event = None):
 
         if isBusTimeOld:
             txt.insert('1.0', time + '\n', "old")
-            print("Is bus time old: " + str(isBusTimeOld)  + " " + time + " lol")
+            print("Is bus time old: " + str(isBusTimeOld)  + " " + time)
         else:
             txt.insert('1.0', time + '\n', "future")
             print("Is bus time old: " + str(isBusTimeOld)  + " " + time)
@@ -58,6 +56,7 @@ def update_txt(event = None):
 
 main = tkinter.Tk()
 txt = tkinter.Text(main)
+txt.configure(font=Font(size=32))
 txt.pack()
 main.after(0, update_txt)
 main.mainloop()

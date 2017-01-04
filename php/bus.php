@@ -1,6 +1,6 @@
 <?php
 
-include("../globals.php");
+include("globals.php");
 
 $url = "http://api.reittiopas.fi/hsl/prod/?request=stop&code=1491123&user=" . $user . "&pass=" . $pass;
 
@@ -12,6 +12,7 @@ $times = array();
 foreach($departures as $departure) {
 	//$date = $departure->date;
 	$time = (string) $departure->time;
+	$busNumber =  $departure->code;
 	if(strlen($time) == 4) {
 		$time = substr_replace($time, ":", 2, 0);
 	}
@@ -20,7 +21,7 @@ foreach($departures as $departure) {
 		$time = substr_replace($time, ":", 2, 0);
 	}
 
-	$times[] = $time;
+	$times[] = $time . " (" . substr($busNumber, 2, 2) . ")";
 }
 
 echo(json_encode($times));
