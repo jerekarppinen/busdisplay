@@ -20,6 +20,10 @@ def compareBusTimeToCurrentTime(time):
     hour = timeSplit[0]
     minute = timeSplit[1]
 
+    # hsl api returns weird shit after midnight
+    if hour == "24":
+        return False
+
     busDate = str(currentYear) + "-" + str(currentMonth) + "-" + str(currentDay) + " " + hour + ":" + minute
 
     busDateTime = datetime.datetime.strptime(busDate, "%Y-%m-%d %H:%M")
