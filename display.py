@@ -55,6 +55,10 @@ def update_txt(event = None):
     main.after(30000, update_txt)
 
 main = tkinter.Tk()
+screen_width = main.winfo_screenwidth()
+screen_height = main.winfo_screenheight()
+resolution = str(screen_width) + "x" + str(screen_height)
+main.geometry(resolution) 
 txt = tkinter.Text(main)
 txt.configure(font=Font(size=32))
 txt.pack()
