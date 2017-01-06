@@ -2,13 +2,33 @@ import tkinter
 from tkinter.font import Font
 from time import sleep
 import requests
-import datetime
+import calendar
+from datetime import datetime
 
-# base logic for this inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
+
+
+def correctTimeFromShittyFormat(time):
+
+    timeSplit = time.split(":")
+    hour = timeSplit[0]
+    minute = timeSplit[1]
+
+    intHour = int(hour)
+
+    if intHour >= 24:
+        intHour = intHour - 24
+
+        hour = str(intHour)
+        hour = "0" + hour
+
+        return hour + ":" + minute
+    else:
+        return time
 
 def compareBusTimeToCurrentTime(time):
 
-    now = datetime.datetime.now()
+    now = datetime.now()
+    #nowMock = datetime.strptime('Jan 5 2017 23:40', '%b %d %Y %H:%M')
 
     currentYear = now.year
     currentDay = now.day
@@ -20,22 +40,17 @@ def compareBusTimeToCurrentTime(time):
     hour = timeSplit[0]
     minute = timeSplit[1]
 
-    hourInt = int(hour)
-    # hsl api returns weird shit after midnight
-    if hourInt >= 24:
-        return False
-
     busDate = str(currentYear) + "-" + str(currentMonth) + "-" + str(currentDay) + " " + hour + ":" + minute
 
-    busDateTime = datetime.datetime.strptime(busDate, "%Y-%m-%d %H:%M")
-
-    print("busDateTime " + str(busDateTime))
+    busDateTime = datetime.strptime(busDate, "%Y-%m-%d %H:%M")
 
     return now > busDateTime
 
-def update_txt(event = None):
+def update_txt(event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
     r = requests.get(url='http://localhost/bus.php')
     data = r.json()
+
+    print(data)
 
     reversedData = reversed(data)
 
@@ -48,14 +63,18 @@ def update_txt(event = None):
 
     for time in reversedData:
 
-        isBusTimeOld = compareBusTimeToCurrentTime(time[:5])
+        correctedTime = correctTimeFromShittyFormat(time[:5])
+
+        print(correctedTime)
+
+        isBusTimeOld = compareBusTimeToCurrentTime(correctedTime)
 
         if isBusTimeOld:
-            txt.insert('1.0', time + '\n', "old")
-            print("Is bus time old: " + str(isBusTimeOld)  + " " + time)
+            txt.insert('1.0', correctedTime + '\n', "old")
+            print("Is bus time old: " + str(isBusTimeOld)  + " " + correctedTime)
         else:
-            txt.insert('1.0', time + '\n', "future")
-            print("Is bus time old: " + str(isBusTimeOld)  + " " + time)
+            txt.insert('1.0', correctedTime + '\n', "future")
+            print("Is bus time old: " + str(isBusTimeOld)  + " " + correctedTime)
 
     print("\n")
     txt.update_idletasks()
