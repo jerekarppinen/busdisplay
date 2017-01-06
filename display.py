@@ -116,7 +116,7 @@ main.after(0, update_txt)
 
 # sleep until next starting minute
 print("Starting on next full minute...")
-# sleeptime = 60 - datetime.utcnow().second
-# time.sleep(sleeptime)
+sleeptime = 60 - datetime.utcnow().second
+time.sleep(sleeptime)
 
 main.mainloop()
