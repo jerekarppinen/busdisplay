@@ -4,8 +4,32 @@ from time import sleep
 import requests
 import calendar
 from datetime import datetime
+import time
 
+def getDeltaTimeInMinutes(time):
+    now = datetime.now()
 
+    currentYear = now.year
+    currentDay = now.day
+    currentMonth = now.month
+    currentHour = now.hour
+    currentMinute = now.minute
+
+    timeSplit = time.split(":")
+    hour = timeSplit[0]
+    minute = timeSplit[1]
+
+    busDate = str(currentYear) + "-" + str(currentMonth) + "-" + str(currentDay) + " " + hour + ":" + minute
+
+    busDateTime = datetime.strptime(busDate, "%Y-%m-%d %H:%M")
+
+    seconds = (busDateTime - now).seconds / 60
+    h = int(round(seconds))
+
+    if h > 1000:
+        return 0
+
+    return h
 
 def correctTimeFromShittyFormat(time):
 
@@ -50,8 +74,6 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
     r = requests.get(url='http://localhost/bus.php')
     data = r.json()
 
-    print(data)
-
     reversedData = reversed(data)
 
     txt.configure(background='black')
@@ -64,30 +86,35 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
     for time in reversedData:
 
         correctedTime = correctTimeFromShittyFormat(time[:5])
+        deltaTimeInMinutes = getDeltaTimeInMinutes(correctedTime)
 
-        print(correctedTime)
+        # in case I need these after
+        # hours, remainder = divmod(deltaTimeInSeconds, 3600)
+        # minutes, seconds = divmod(remainder, 60)
 
         isBusTimeOld = compareBusTimeToCurrentTime(correctedTime)
 
         if isBusTimeOld:
-            txt.insert('1.0', correctedTime + '\n', "old")
-            print("Is bus time old: " + str(isBusTimeOld)  + " " + correctedTime)
+            txt.insert('1.0', correctedTime + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "old")
         else:
-            txt.insert('1.0', correctedTime + '\n', "future")
-            print("Is bus time old: " + str(isBusTimeOld)  + " " + correctedTime)
+            txt.insert('1.0', correctedTime + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
 
-    print("\n")
     txt.update_idletasks()
-    main.after(30000, update_txt)
+    main.after(10000, update_txt)
 
 main = tkinter.Tk()
 screen_width = main.winfo_screenwidth()
 screen_height = main.winfo_screenheight()
-
 resolution = str(screen_width) + "x" + str(screen_height)
 main.geometry(resolution) 
 txt = tkinter.Text(main)
 txt.configure(font=Font(size=32, family="Default sans-serif"))
 txt.pack()
 main.after(0, update_txt)
+
+# sleep until next starting minute
+print("Starting on next full minute...")
+sleeptime = 60 - datetime.utcnow().second
+time.sleep(sleeptime)
+
 main.mainloop()
