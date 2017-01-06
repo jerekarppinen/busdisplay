@@ -4,7 +4,9 @@ from time import sleep
 import requests
 import calendar
 from datetime import datetime
+from datetime import timedelta
 import time
+import collections
 
 def getDeltaTimeInMinutes(time):
     now = datetime.now()
@@ -49,24 +51,18 @@ def correctTimeFromShittyFormat(time):
     else:
         return time
 
-def compareBusTimeToCurrentTime(time):
+def compareBusTimeToCurrentTime(time, date):
 
     now = datetime.now()
     #nowMock = datetime.strptime('Jan 5 2017 23:40', '%b %d %Y %H:%M')
 
-    currentYear = now.year
-    currentDay = now.day
-    currentMonth = now.month
-    currentHour = now.hour
-    currentMinute = now.minute
+    busDateYear = date[:4]
+    busDateMonth = date[4:6]
+    busDateDay = date[6:8]
 
-    timeSplit = time.split(":")
-    hour = timeSplit[0]
-    minute = timeSplit[1]
+    busDateString = busDateYear + "-" + busDateMonth + "-" + busDateDay  + " " + time
 
-    busDate = str(currentYear) + "-" + str(currentMonth) + "-" + str(currentDay) + " " + hour + ":" + minute
-
-    busDateTime = datetime.strptime(busDate, "%Y-%m-%d %H:%M")
+    busDateTime = datetime.strptime(busDateString, "%Y-%m-%d %H:%M")
 
     return now > busDateTime
 
@@ -74,7 +70,7 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
     r = requests.get(url='http://localhost/bus.php')
     data = r.json()
 
-    reversedData = reversed(data)
+    data = collections.OrderedDict(reversed(sorted(data.items())))
 
     txt.configure(background='black')
 
@@ -84,26 +80,45 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
 
     txt.delete("1.0", "end")
 
-    for time in reversedData:
+    for key, value in data.items():
 
-        correctedTime = correctTimeFromShittyFormat(time[:5])
+        time = key[:5]
+        date = value[:8]
+        bus = value[9:]
+
+        print(time, date, bus)
+
+        correctedTime = correctTimeFromShittyFormat(time)
         deltaTimeInMinutes = getDeltaTimeInMinutes(correctedTime)
 
-        busNumber = time[5:]
+        # make waiting times over 60 minutes look prettier on the screen
+        if deltaTimeInMinutes >= 60:
+
+            over60 = str(timedelta(minutes=deltaTimeInMinutes))
+            over60List = over60.split(":")
+            over60ListMinutes = str(over60List[1])
+
+            if len(over60ListMinutes) == 2 and over60ListMinutes[0] == "0":
+                over60ListMinutes = over60ListMinutes[1]
+
+            deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
 
         # in case I need these afterwards
         # hours, remainder = divmod(deltaTimeInSeconds, 3600)
         # minutes, seconds = divmod(remainder, 60)
 
-        isBusTimeOld = compareBusTimeToCurrentTime(correctedTime)
+        isBusTimeOld = compareBusTimeToCurrentTime(correctedTime, date)
 
         if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
-            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+            txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
         elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
-            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+            txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+        elif deltaTimeInMinutes < 60:
+            txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
         else:
-            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
+            txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
 
+    print('\n')
     txt.update_idletasks()
     main.after(10000, update_txt)
 
@@ -118,8 +133,8 @@ txt.pack()
 main.after(0, update_txt)
 
 # sleep until next starting minute
-print("Starting on next full minute...")
-sleeptime = 60 - datetime.utcnow().second
-time.sleep(sleeptime)
+# print("Starting on next full minute...")
+# sleeptime = 60 - datetime.utcnow().second
+# time.sleep(sleeptime)
 
 main.mainloop()
