@@ -88,6 +88,8 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
         correctedTime = correctTimeFromShittyFormat(time[:5])
         deltaTimeInMinutes = getDeltaTimeInMinutes(correctedTime)
 
+        busNumber = time[5:]
+
         # in case I need these after
         # hours, remainder = divmod(deltaTimeInSeconds, 3600)
         # minutes, seconds = divmod(remainder, 60)
@@ -95,9 +97,9 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
         isBusTimeOld = compareBusTimeToCurrentTime(correctedTime)
 
         if isBusTimeOld or deltaTimeInMinutes < 1:
-            txt.insert('1.0', correctedTime + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "old")
+            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "old")
         else:
-            txt.insert('1.0', correctedTime + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
+            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
 
     txt.update_idletasks()
     main.after(10000, update_txt)
@@ -114,7 +116,7 @@ main.after(0, update_txt)
 
 # sleep until next starting minute
 print("Starting on next full minute...")
-sleeptime = 60 - datetime.utcnow().second
-time.sleep(sleeptime)
+# sleeptime = 60 - datetime.utcnow().second
+# time.sleep(sleeptime)
 
 main.mainloop()
