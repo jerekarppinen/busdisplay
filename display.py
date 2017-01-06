@@ -78,7 +78,8 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
 
     txt.configure(background='black')
 
-    txt.tag_configure("old", foreground="yellow")
+    txt.tag_configure("makehaste", foreground="yellow")
+    txt.tag_configure("toolate", foreground="red")
     txt.tag_configure("future", foreground="white")
 
     txt.delete("1.0", "end")
@@ -90,14 +91,16 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
 
         busNumber = time[5:]
 
-        # in case I need these after
+        # in case I need these afterwards
         # hours, remainder = divmod(deltaTimeInSeconds, 3600)
         # minutes, seconds = divmod(remainder, 60)
 
         isBusTimeOld = compareBusTimeToCurrentTime(correctedTime)
 
-        if deltaTimeInMinutes <= 5:
-            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "old")
+        if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
+            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+        elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
+            txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
         else:
             txt.insert('1.0', correctedTime + " " + busNumber + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
 
