@@ -12,6 +12,7 @@ $times = array();
 foreach($departures as $departure) {
 	//$date = $departure->date;
 	$time = (string) $departure->time;
+	$date = (string) $departure->date;
 	$busNumber =  $departure->code;
 	if(strlen($time) == 4) {
 		$time = substr_replace($time, ":", 2, 0);
@@ -21,7 +22,7 @@ foreach($departures as $departure) {
 		$time = substr_replace($time, ":", 2, 0);
 	}
 
-	$times[] = $time . " (" . substr($busNumber, 2, 2) . ")";
+	$times[$time] = $date . " (" . substr($busNumber, 2, 2) . ")";
 }
 
 echo(json_encode($times));
