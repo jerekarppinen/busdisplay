@@ -94,7 +94,7 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
 
         isBusTimeOld = compareBusTimeToCurrentTime(correctedTime)
 
-        if isBusTimeOld:
+        if isBusTimeOld or deltaTimeInMinutes < 1:
             txt.insert('1.0', correctedTime + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "old")
         else:
             txt.insert('1.0', correctedTime + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
