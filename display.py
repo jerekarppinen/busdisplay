@@ -1,6 +1,4 @@
 from time import sleep
-import requests
-import calendar
 from datetime import datetime
 from datetime import timedelta
 import time
@@ -171,4 +169,5 @@ class Display():
 if __name__ == '__main__':
 	import tkinter
 	from tkinter.font import Font
+	import requests
 	Display()
