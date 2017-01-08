@@ -1,5 +1,3 @@
-import tkinter
-from tkinter.font import Font
 from time import sleep
 import requests
 import calendar
@@ -171,4 +169,6 @@ class Display():
 		self.main.after(30000, self.update_txt)
 
 if __name__ == '__main__':
+	import tkinter
+	from tkinter.font import Font
 	Display()
