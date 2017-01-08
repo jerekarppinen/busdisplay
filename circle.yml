@@ -2,9 +2,9 @@ machine:
   python:
     version: 3.5.2
 
-dependencies:
-  pre:
-    - sudo apt-get update && sudo apt-get install tk-dev && rm -r /var/lib/apt/lists/* && sudo apt-get install python3-tk
+# dependencies:
+#   pre:
+#     - sudo apt-get update && sudo apt-get install tk-dev && rm -r /var/lib/apt/lists/* && sudo apt-get install python3-tk
 
 test:
   override:
