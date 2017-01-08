@@ -24,7 +24,7 @@ class Display():
 		self.main.after(0, self.update_txt)
 
 		#sleep until next starting minute
-		self.sleepUntilNextMinute()
+		#self.sleepUntilNextMinute()
 
 		self.main.mainloop()
 
@@ -64,107 +64,99 @@ class Display():
 
 		return h
 
-	def correctTimeFromShittyFormat(self, time):
+	def isCurrentTimeBiggerThanBusDepartureTime(self, time, now=None):
+
+		if now is None:
+			now = datetime.now()
+		#nowMock = datetime.strptime('Jan 5 2017 23:40', '%b %d %Y %H:%M')
+
+		currentYear = now.year
+		currentDay = now.day
+		currentMonth = now.month
+		currentHour = now.hour
+		currentMinute = now.minute
 
 		timeSplit = time.split(":")
 		hour = timeSplit[0]
 		minute = timeSplit[1]
 
-		intHour = int(hour)
+		busDate = str(currentYear) + "-" + str(currentMonth) + "-" + str(currentDay) + " " + hour + ":" + minute
 
-		if intHour >= 24:
-			intHour = intHour - 24
-
-			hour = str(intHour)
-			hour = "0" + hour
-
-			return hour + ":" + minute
-		else:
-			return time
-
-	def isCurrentTimeBiggerThanBusDepartureTime(self, time, date, now=None):
-
-		if now is None:
-			now = datetime.now()
-
-		busDateYear = date[:4]
-		busDateMonth = date[4:6]
-		busDateDay = date[6:8]
-
-		busDateString = busDateYear + '-' + busDateMonth + '-' + busDateDay  + ' ' + time
-
-		busDateTime = datetime.strptime(busDateString, '%Y-%m-%d %H:%M')
-
-		# print('now: ' + str(now), 'bus: ' + str(busDateTime))
-		# print('now is bigger ' + str(now > busDateTime))
+		busDateTime = datetime.strptime(busDate, "%Y-%m-%d %H:%M")
 
 		return now > busDateTime
 
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
-		r = requests.get(url='http://localhost/crawler.php')
+		r = requests.get(url='http://localhost/api.php')
 		data = r.json()
 
-		logging.info(datetime.now())
+		self.txt.configure(background='black')
 
-		data = collections.OrderedDict(reversed(sorted(data.items())))
+		self.txt.tag_configure("makehaste", foreground="yellow")
+		self.txt.tag_configure("toolate", foreground="red")
+		self.txt.tag_configure("future", foreground="white")
+		self.txt.tag_configure("title", foreground="lightyellow")
 
 		self.txt.delete("1.0", "end")
 
 		for key, value in data.items():
-			time = value['time']
-			date = value['date']
-			bus = value['bus']
+			print(key, value);
+			if key == "stopname":
+				stopName = value
+			elif key == "destination":
+				destination = value
+			elif key == "departures":
 
-			logging.info('Time: ' + str(time) + ', Date: ' + str(date) + ', Bus: ' + bus)
+				deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
+				for item, v in deps.items():
+					print(item, v['line'], v['time'])
 
-			self.txt.configure(background='black')
+					line = "(" + v['line'] + ")"
+					time = v['time']
 
-			self.txt.tag_configure("makehaste", foreground="yellow")
-			self.txt.tag_configure("toolate", foreground="red")
-			self.txt.tag_configure("future", foreground="white")
+					logging.info('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
 
 
-			print(time, date, bus)
+					print('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
 
-			correctedTime = self.correctTimeFromShittyFormat(time)
-			logging.debug('Corrected time: ' + correctedTime)
-			deltaTimeInMinutes = self.getDeltaTimeInMinutes(correctedTime)
-			logging.debug('DeltaTimeInMinutes: ' + str(deltaTimeInMinutes))
+					deltaTimeInMinutes = self.getDeltaTimeInMinutes(time)
+					logging.debug('DeltaTimeInMinutes: ' + str(deltaTimeInMinutes))
 
-			# make waiting times over 60 minutes look prettier on the screen
-			if deltaTimeInMinutes >= 60:
+					# make waiting times over 60 minutes look prettier on the screen
+					if deltaTimeInMinutes >= 60:
 
-				over60 = str(timedelta(minutes=deltaTimeInMinutes))
-				over60List = over60.split(":")
-				over60ListMinutes = str(over60List[1])
+						over60 = str(timedelta(minutes=deltaTimeInMinutes))
+						over60List = over60.split(":")
+						over60ListMinutes = str(over60List[1])
 
-				if len(over60ListMinutes) == 2 and over60ListMinutes[0] == "0":
-					over60ListMinutes = over60ListMinutes[1]
+						if len(over60ListMinutes) == 2 and over60ListMinutes[0] == "0":
+							over60ListMinutes = over60ListMinutes[1]
 
-				deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
+						deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
 
-			# in case I need these afterwards
-			# hours, remainder = divmod(deltaTimeInSeconds, 3600)
-			# minutes, seconds = divmod(remainder, 60)
+					# in case I need these afterwards
+					# hours, remainder = divmod(deltaTimeInSeconds, 3600)
+					# minutes, seconds = divmod(remainder, 60)
 
-			isBusTimeOld = self.isCurrentTimeBiggerThanBusDepartureTime(correctedTime, date)
+					# isBusTimeOld = self.isCurrentTimeBiggerThanBusDepartureTime(time)
 
-			logging.debug('CorrectedTime: ' + correctedTime + ' isBusTimeOld: ' + str(isBusTimeOld))
+					# logging.debug('Time: ' + time + ' isBusTimeOld: ' + str(isBusTimeOld))
 
-			if isBusTimeOld is False: # do not show past times
+					# if isBusTimeOld is False: # do not show past times
 
-				if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
-					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
-				elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
-					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
-				elif deltaTimeInMinutes < 60:
-					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
-				else:
-					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
+					if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
+						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+					elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
+						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+					elif deltaTimeInMinutes < 60:
+						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
+					else:
+						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
 
-		print('\n')
-		self.txt.update_idletasks()
-		self.main.after(30000, self.update_txt)
+				print('\n')
+				self.txt.update_idletasks()
+				self.main.after(30000, self.update_txt)
+		self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n\n', "title")
 
 if __name__ == '__main__':
 	import tkinter

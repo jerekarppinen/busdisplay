@@ -1,2 +1,2 @@
-docker build -t bus-crawler .
-docker run -d -p 80:80 --name my-running-app bus-crawler
+docker build -t bus-api .
+docker run -d -p 80:80 --name my-running-app bus-api
