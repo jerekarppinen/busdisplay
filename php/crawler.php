@@ -5,7 +5,7 @@ $response = json_decode(file_get_contents($url));
 $departures = $response[0]->departures;
 $times = array();
 foreach($departures as $departure) {
-	//$date = $departure->date;
+
 	$time = (string) $departure->time;
 	$date = (string) $departure->date;
 	$busNumber =  substr($departure->code, 2, 3);
@@ -18,7 +18,7 @@ foreach($departures as $departure) {
 	$month = substr($date, 4, 2);
 	$day = substr($date, 6, 2);
 
-	if($hour > 23) {
+	if($hour > 23) { // have to do this because hsl api returns wrong date when clock is over 23
 		$day = intval($day);
 		$day++;
 		$day = (string) $day;
