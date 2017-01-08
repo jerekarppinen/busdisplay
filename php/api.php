@@ -8,6 +8,8 @@ $client = new SoapClient("http://omatlahdot.hkl.fi/interfaces/kamo?wsdl");
 
 $times = array();
 
+$i = 10;
+
 foreach($client->getNextDepartures($_GET['id']) as $departure) {
 
 	$destination = $departure->dest;
@@ -22,7 +24,9 @@ foreach($client->getNextDepartures($_GET['id']) as $departure) {
 	$timeWithoutChars = str_replace(":", "", $time);
 	$timeAsInteger = intval($timeWithoutChars);
 
-	$times[$timeAsInteger] = array("line" => $line, "time" => $time);
+	$times[$i] = array("line" => $line, "time" => $time);
+
+	$i++;
 
 }
 

@@ -158,7 +158,7 @@ class Display():
 				self.main.after(30000, self.update_txt)
 
 		if config.showStopAndDestination == 1:
-			self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n\n', "title")
+			self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n', "title")
 
 if __name__ == '__main__':
 	import tkinter
