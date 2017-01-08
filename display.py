@@ -8,8 +8,10 @@ from datetime import timedelta
 import time
 import collections
 
-def getDeltaTimeInMinutes(time):
-	now = datetime.now()
+def getDeltaTimeInMinutes(time, now=None):
+
+	if now is None:
+		now = datetime.now()
 
 	currentYear = now.year
 	currentDay = now.day
@@ -17,19 +19,20 @@ def getDeltaTimeInMinutes(time):
 	currentHour = now.hour
 	currentMinute = now.minute
 
-	timeSplit = time.split(":")
+	timeSplit = time.split(':')
 	hour = timeSplit[0]
 	minute = timeSplit[1]
 
-	busDate = str(currentYear) + "-" + str(currentMonth) + "-" + str(currentDay) + " " + hour + ":" + minute
+	busDate = str(currentYear) + '-' + str(currentMonth) + '-' + str(currentDay) + ' ' + hour + ':' + minute
 
-	busDateTime = datetime.strptime(busDate, "%Y-%m-%d %H:%M")
+	busDateTime = datetime.strptime(busDate, '%Y-%m-%d %H:%M')
 
-	seconds = (busDateTime - now).seconds / 60
-	h = int(round(seconds))
+	minutes = (busDateTime - now).seconds / 60
+	h = int(round(minutes))
 
+	# if it is close enough to present time, h validates to over 1000 for some reason
 	if h > 1000:
-		return 0
+	  return 0
 
 	return h
 
@@ -51,18 +54,21 @@ def correctTimeFromShittyFormat(time):
 	else:
 		return time
 
-def compareBusTimeToCurrentTime(time, date):
+def isCurrentTimeBiggerThanBusDepartureTime(time, date, now=None):
 
-	now = datetime.now()
-	#nowMock = datetime.strptime('Jan 5 2017 23:40', '%b %d %Y %H:%M')
+	if now is None:
+		now = datetime.now()
 
 	busDateYear = date[:4]
 	busDateMonth = date[4:6]
 	busDateDay = date[6:8]
 
-	busDateString = busDateYear + "-" + busDateMonth + "-" + busDateDay  + " " + time
+	busDateString = busDateYear + '-' + busDateMonth + '-' + busDateDay  + ' ' + time
 
-	busDateTime = datetime.strptime(busDateString, "%Y-%m-%d %H:%M")
+	busDateTime = datetime.strptime(busDateString, '%Y-%m-%d %H:%M')
+
+	# print('now: ' + str(now), 'bus: ' + str(busDateTime))
+	# print('now is bigger ' + str(now > busDateTime))
 
 	return now > busDateTime
 
@@ -107,16 +113,18 @@ def update_txt(event = None): # base logic for update_txt function inspired by h
 		# hours, remainder = divmod(deltaTimeInSeconds, 3600)
 		# minutes, seconds = divmod(remainder, 60)
 
-		isBusTimeOld = compareBusTimeToCurrentTime(correctedTime, date)
+		isBusTimeOld = isCurrentTimeBiggerThanBusDepartureTime(correctedTime, date)
 
-		if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
-			txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
-		elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
-			txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
-		elif deltaTimeInMinutes < 60:
-			txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
-		else:
-			txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
+		if isBusTimeOld is False: # do not show past times
+
+			if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
+				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+			elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
+				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+			elif deltaTimeInMinutes < 60:
+				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
+			else:
+				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
 
 	print('\n')
 	txt.update_idletasks()
