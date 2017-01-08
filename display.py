@@ -24,7 +24,7 @@ class Display():
 		self.main.after(0, self.update_txt)
 
 		#sleep until next starting minute
-		#self.sleepUntilNextMinute()
+		self.sleepUntilNextMinute()
 
 		self.main.mainloop()
 
@@ -156,7 +156,9 @@ class Display():
 				print('\n')
 				self.txt.update_idletasks()
 				self.main.after(30000, self.update_txt)
-		self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n\n', "title")
+
+		# todo: print this line if display is wide enough
+		# self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n\n', "title")
 
 if __name__ == '__main__':
 	import tkinter
