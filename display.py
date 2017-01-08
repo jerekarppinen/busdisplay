@@ -4,7 +4,7 @@ from datetime import timedelta
 import time
 import collections
 import logging
-
+import config
 
 class Display():
 	def __init__(self):
@@ -17,7 +17,7 @@ class Display():
 		screen_height = self.main.winfo_screenheight()
 		resolution = str(screen_width) + "x" + str(screen_height)
 		self.main.geometry(resolution) 
-		self.txt = tkinter.Text(self.main)
+		self.txt = tkinter.Text(self.main, padx=10)
 		self.txt.configure(font=Font(size=32, family="Default sans-serif"))
 		self.txt.pack()
 
@@ -87,7 +87,7 @@ class Display():
 		return now > busDateTime
 
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
-		r = requests.get(url='http://localhost/api.php')
+		r = requests.get(url='http://localhost/api.php?id=1491123') # 1201134 itämerenkatu 1491123 humalniementie
 		data = r.json()
 
 		self.txt.configure(background='black')
@@ -95,7 +95,7 @@ class Display():
 		self.txt.tag_configure("makehaste", foreground="yellow")
 		self.txt.tag_configure("toolate", foreground="red")
 		self.txt.tag_configure("future", foreground="white")
-		self.txt.tag_configure("title", foreground="lightyellow")
+		self.txt.tag_configure("title", foreground="lightgreen")
 
 		self.txt.delete("1.0", "end")
 
@@ -157,8 +157,8 @@ class Display():
 				self.txt.update_idletasks()
 				self.main.after(30000, self.update_txt)
 
-		# todo: print this line if display is wide enough
-		# self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n\n', "title")
+		if config.showStopAndDestination == 1:
+			self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n\n', "title")
 
 if __name__ == '__main__':
 	import tkinter

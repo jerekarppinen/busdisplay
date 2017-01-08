@@ -1,10 +1,14 @@
 <?php
 
+if(isset($_GET['id']) && is_numeric($_GET['id'])) {
+	$id = $_GET['id'];
+}
+
 $client = new SoapClient("http://omatlahdot.hkl.fi/interfaces/kamo?wsdl");
 
 $times = array();
 
-foreach($client->getNextDepartures('1491123') as $departure) {
+foreach($client->getNextDepartures($_GET['id']) as $departure) {
 
 	$destination = $departure->dest;
 	$line = $departure->line;

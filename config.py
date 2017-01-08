@@ -1,0 +1,1 @@
+showStopAndDestination=0
