@@ -24,11 +24,15 @@ class Display():
 		self.main.after(0, self.update_txt)
 
 		#sleep until next starting minute
-		print("Starting on next full minute...")
-		# sleeptime = 60 - datetime.utcnow().second
-		# time.sleep(sleeptime)
+		self.sleepUntilNextMinute()
 
 		self.main.mainloop()
+
+	def sleepUntilNextMinute(self):
+		print('Starting on next full minute...')
+		sleeptime = 60 - datetime.utcnow().second
+		print('Starting in ' + str(sleeptime) + ' seconds.')
+		time.sleep(sleeptime)
 
 	def getDeltaTimeInMinutes(self, time, now=None):
 
