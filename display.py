@@ -7,10 +7,14 @@ from datetime import datetime
 from datetime import timedelta
 import time
 import collections
+import logging
 
 
 class Display():
 	def __init__(self):
+
+		logging.basicConfig(filename='display.log',level=logging.DEBUG)
+		logging.info('\n\n')
 
 		self.main = tkinter.Tk()
 		screen_width = self.main.winfo_screenwidth()
@@ -102,6 +106,8 @@ class Display():
 		r = requests.get(url='http://localhost/crawler.php')
 		data = r.json()
 
+		logging.info(datetime.now())
+
 		data = collections.OrderedDict(reversed(sorted(data.items())))
 
 		self.txt.delete("1.0", "end")
@@ -110,6 +116,8 @@ class Display():
 			time = value['time']
 			date = value['date']
 			bus = value['bus']
+
+			logging.info('Time: ' + str(time) + ', Date: ' + str(date) + ', Bus: ' + bus)
 
 			self.txt.configure(background='black')
 
@@ -121,7 +129,9 @@ class Display():
 			print(time, date, bus)
 
 			correctedTime = self.correctTimeFromShittyFormat(time)
+			logging.debug('Corrected time: ' + correctedTime)
 			deltaTimeInMinutes = self.getDeltaTimeInMinutes(correctedTime)
+			logging.debug('DeltaTimeInMinutes: ' + str(deltaTimeInMinutes))
 
 			# make waiting times over 60 minutes look prettier on the screen
 			if deltaTimeInMinutes >= 60:
@@ -140,6 +150,8 @@ class Display():
 			# minutes, seconds = divmod(remainder, 60)
 
 			isBusTimeOld = self.isCurrentTimeBiggerThanBusDepartureTime(correctedTime, date)
+
+			logging.debug('CorrectedTime: ' + correctedTime + ' isBusTimeOld: ' + str(isBusTimeOld))
 
 			if isBusTimeOld is False: # do not show past times
 
