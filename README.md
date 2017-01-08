@@ -16,4 +16,4 @@
 
 ## Other stuff
 
-- crawler.py is obsolete at the moment
+- crawler.py and bus.php are obsolete at the moment
