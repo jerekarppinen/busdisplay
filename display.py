@@ -8,141 +8,149 @@ from datetime import timedelta
 import time
 import collections
 
-def getDeltaTimeInMinutes(time, now=None):
 
-	if now is None:
-		now = datetime.now()
+class Display():
+	def __init__(self):
 
-	currentYear = now.year
-	currentDay = now.day
-	currentMonth = now.month
-	currentHour = now.hour
-	currentMinute = now.minute
+		self.main = tkinter.Tk()
+		screen_width = self.main.winfo_screenwidth()
+		screen_height = self.main.winfo_screenheight()
+		resolution = str(screen_width) + "x" + str(screen_height)
+		self.main.geometry(resolution) 
+		self.txt = tkinter.Text(self.main)
+		self.txt.configure(font=Font(size=32, family="Default sans-serif"))
+		self.txt.pack()
 
-	timeSplit = time.split(':')
-	hour = timeSplit[0]
-	minute = timeSplit[1]
+		self.main.after(0, self.update_txt)
 
-	busDate = str(currentYear) + '-' + str(currentMonth) + '-' + str(currentDay) + ' ' + hour + ':' + minute
+		#sleep until next starting minute
+		print("Starting on next full minute...")
+		# sleeptime = 60 - datetime.utcnow().second
+		# time.sleep(sleeptime)
 
-	busDateTime = datetime.strptime(busDate, '%Y-%m-%d %H:%M')
+		self.main.mainloop()
 
-	minutes = (busDateTime - now).seconds / 60
-	h = int(round(minutes))
+	def getDeltaTimeInMinutes(self, time, now=None):
 
-	# if it is close enough to present time, h validates to over 1000 for some reason
-	if h > 1000:
-	  return 0
+		if now is None:
+			now = datetime.now()
 
-	return h
+		currentYear = now.year
+		currentDay = now.day
+		currentMonth = now.month
+		currentHour = now.hour
+		currentMinute = now.minute
 
-def correctTimeFromShittyFormat(time):
+		timeSplit = time.split(':')
+		hour = timeSplit[0]
+		minute = timeSplit[1]
 
-	timeSplit = time.split(":")
-	hour = timeSplit[0]
-	minute = timeSplit[1]
+		busDate = str(currentYear) + '-' + str(currentMonth) + '-' + str(currentDay) + ' ' + hour + ':' + minute
 
-	intHour = int(hour)
+		busDateTime = datetime.strptime(busDate, '%Y-%m-%d %H:%M')
 
-	if intHour >= 24:
-		intHour = intHour - 24
+		minutes = (busDateTime - now).seconds / 60
+		h = int(round(minutes))
 
-		hour = str(intHour)
-		hour = "0" + hour
+		# if it is close enough to present time, h validates to over 1000 for some reason
+		if h > 1000:
+		  return 0
 
-		return hour + ":" + minute
-	else:
-		return time
+		return h
 
-def isCurrentTimeBiggerThanBusDepartureTime(time, date, now=None):
+	def correctTimeFromShittyFormat(self, time):
 
-	if now is None:
-		now = datetime.now()
+		timeSplit = time.split(":")
+		hour = timeSplit[0]
+		minute = timeSplit[1]
 
-	busDateYear = date[:4]
-	busDateMonth = date[4:6]
-	busDateDay = date[6:8]
+		intHour = int(hour)
 
-	busDateString = busDateYear + '-' + busDateMonth + '-' + busDateDay  + ' ' + time
+		if intHour >= 24:
+			intHour = intHour - 24
 
-	busDateTime = datetime.strptime(busDateString, '%Y-%m-%d %H:%M')
+			hour = str(intHour)
+			hour = "0" + hour
 
-	# print('now: ' + str(now), 'bus: ' + str(busDateTime))
-	# print('now is bigger ' + str(now > busDateTime))
+			return hour + ":" + minute
+		else:
+			return time
 
-	return now > busDateTime
+	def isCurrentTimeBiggerThanBusDepartureTime(self, time, date, now=None):
 
-def update_txt(event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
-	r = requests.get(url='http://localhost/crawler.php')
-	data = r.json()
+		if now is None:
+			now = datetime.now()
 
-	data = collections.OrderedDict(reversed(sorted(data.items())))
+		busDateYear = date[:4]
+		busDateMonth = date[4:6]
+		busDateDay = date[6:8]
 
-	txt.delete("1.0", "end")
+		busDateString = busDateYear + '-' + busDateMonth + '-' + busDateDay  + ' ' + time
 
-	for key, value in data.items():
-		time = value['time']
-		date = value['date']
-		bus = value['bus']
+		busDateTime = datetime.strptime(busDateString, '%Y-%m-%d %H:%M')
 
-		txt.configure(background='black')
+		# print('now: ' + str(now), 'bus: ' + str(busDateTime))
+		# print('now is bigger ' + str(now > busDateTime))
 
-		txt.tag_configure("makehaste", foreground="yellow")
-		txt.tag_configure("toolate", foreground="red")
-		txt.tag_configure("future", foreground="white")
+		return now > busDateTime
+
+	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
+		r = requests.get(url='http://localhost/crawler.php')
+		data = r.json()
+
+		data = collections.OrderedDict(reversed(sorted(data.items())))
+
+		self.txt.delete("1.0", "end")
+
+		for key, value in data.items():
+			time = value['time']
+			date = value['date']
+			bus = value['bus']
+
+			self.txt.configure(background='black')
+
+			self.txt.tag_configure("makehaste", foreground="yellow")
+			self.txt.tag_configure("toolate", foreground="red")
+			self.txt.tag_configure("future", foreground="white")
 
 
-		print(time, date, bus)
+			print(time, date, bus)
 
-		correctedTime = correctTimeFromShittyFormat(time)
-		deltaTimeInMinutes = getDeltaTimeInMinutes(correctedTime)
+			correctedTime = self.correctTimeFromShittyFormat(time)
+			deltaTimeInMinutes = self.getDeltaTimeInMinutes(correctedTime)
 
-		# make waiting times over 60 minutes look prettier on the screen
-		if deltaTimeInMinutes >= 60:
+			# make waiting times over 60 minutes look prettier on the screen
+			if deltaTimeInMinutes >= 60:
 
-			over60 = str(timedelta(minutes=deltaTimeInMinutes))
-			over60List = over60.split(":")
-			over60ListMinutes = str(over60List[1])
+				over60 = str(timedelta(minutes=deltaTimeInMinutes))
+				over60List = over60.split(":")
+				over60ListMinutes = str(over60List[1])
 
-			if len(over60ListMinutes) == 2 and over60ListMinutes[0] == "0":
-				over60ListMinutes = over60ListMinutes[1]
+				if len(over60ListMinutes) == 2 and over60ListMinutes[0] == "0":
+					over60ListMinutes = over60ListMinutes[1]
 
-			deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
+				deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
 
-		# in case I need these afterwards
-		# hours, remainder = divmod(deltaTimeInSeconds, 3600)
-		# minutes, seconds = divmod(remainder, 60)
+			# in case I need these afterwards
+			# hours, remainder = divmod(deltaTimeInSeconds, 3600)
+			# minutes, seconds = divmod(remainder, 60)
 
-		isBusTimeOld = isCurrentTimeBiggerThanBusDepartureTime(correctedTime, date)
+			isBusTimeOld = self.isCurrentTimeBiggerThanBusDepartureTime(correctedTime, date)
 
-		if isBusTimeOld is False: # do not show past times
+			if isBusTimeOld is False: # do not show past times
 
-			if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
-				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
-			elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
-				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
-			elif deltaTimeInMinutes < 60:
-				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
-			else:
-				txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
+				if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
+					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+				elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
+					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+				elif deltaTimeInMinutes < 60:
+					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
+				else:
+					self.txt.insert('1.0', correctedTime + " " + bus + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
 
-	print('\n')
-	txt.update_idletasks()
-	main.after(30000, update_txt)
+		print('\n')
+		self.txt.update_idletasks()
+		self.main.after(30000, self.update_txt)
 
-main = tkinter.Tk()
-screen_width = main.winfo_screenwidth()
-screen_height = main.winfo_screenheight()
-resolution = str(screen_width) + "x" + str(screen_height)
-main.geometry(resolution) 
-txt = tkinter.Text(main)
-txt.configure(font=Font(size=32, family="Default sans-serif"))
-txt.pack()
-main.after(0, update_txt)
-
-#sleep until next starting minute
-print("Starting on next full minute...")
-# sleeptime = 60 - datetime.utcnow().second
-# time.sleep(sleeptime)
-
-main.mainloop()
+if __name__ == '__main__':
+	Display()
