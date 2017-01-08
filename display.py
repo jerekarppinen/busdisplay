@@ -34,8 +34,10 @@ class Display():
 
 	def sleepUntilNextMinute(self):
 		print('Starting on next full minute...')
+		logging.info('Starting on next full minute...')
 		sleeptime = 60 - datetime.utcnow().second
 		print('Starting in ' + str(sleeptime) + ' seconds.')
+		logging.info('Starting in ' + str(sleeptime) + ' seconds.')
 		time.sleep(sleeptime)
 
 	def getDeltaTimeInMinutes(self, time, now=None):
