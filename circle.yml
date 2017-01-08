@@ -1,0 +1,11 @@
+machine:
+  python:
+    version: 3.5.2
+
+dependencies:
+  pre:
+    - sudo apt-get install python3-tk
+
+test:
+  override:
+    - python3 test.py
