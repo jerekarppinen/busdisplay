@@ -4,7 +4,6 @@ from datetime import timedelta
 import time
 import collections
 import logging
-import config
 
 class Display():
 	def __init__(self):
@@ -90,8 +89,10 @@ class Display():
 				except ValueError as e:
 					logging.error("Can't handle", e)
 					logging.error("Deps: ", deps)
+					logging.error("Items: ", value.items())
 					print("Can't handle", e)
 					print("Deps: ", deps)
+					print("Items: ", value.items())
 
 				for item, v in deps.items():
 					print(item, v['line'], v['time'])
@@ -132,6 +133,7 @@ class Display():
 				self.txt.update_idletasks()
 				self.main.after(30000, self.update_txt)
 
+		import config
 		if config.showStopAndDestination == 1:
 			self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n', "title")
 
