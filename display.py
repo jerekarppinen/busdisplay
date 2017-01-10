@@ -64,28 +64,6 @@ class Display():
 
 		return h
 
-	def isCurrentTimeBiggerThanBusDepartureTime(self, time, now=None):
-
-		if now is None:
-			now = datetime.now()
-		#nowMock = datetime.strptime('Jan 5 2017 23:40', '%b %d %Y %H:%M')
-
-		currentYear = now.year
-		currentDay = now.day
-		currentMonth = now.month
-		currentHour = now.hour
-		currentMinute = now.minute
-
-		timeSplit = time.split(":")
-		hour = timeSplit[0]
-		minute = timeSplit[1]
-
-		busDate = str(currentYear) + "-" + str(currentMonth) + "-" + str(currentDay) + " " + hour + ":" + minute
-
-		busDateTime = datetime.strptime(busDate, "%Y-%m-%d %H:%M")
-
-		return now > busDateTime
-
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
 		r = requests.get(url='http://localhost/api.php?id=1491123') # 1201134 itämerenkatu 1491123 humalniementie
 		data = r.json()
@@ -111,7 +89,7 @@ class Display():
 					deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
 				except ValueError as e:
 					logging.error("Can't handle", e)
-					logging.error("Deps ", deps)
+					logging.error("Deps: ", deps)
 					print("Can't handle", e)
 					print("Deps: ", deps)
 
@@ -140,16 +118,6 @@ class Display():
 							over60ListMinutes = over60ListMinutes[1]
 
 						deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
-
-					# in case I need these afterwards
-					# hours, remainder = divmod(deltaTimeInSeconds, 3600)
-					# minutes, seconds = divmod(remainder, 60)
-
-					# isBusTimeOld = self.isCurrentTimeBiggerThanBusDepartureTime(time)
-
-					# logging.debug('Time: ' + time + ' isBusTimeOld: ' + str(isBusTimeOld))
-
-					# if isBusTimeOld is False: # do not show past times
 
 					if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
 						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
