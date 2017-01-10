@@ -107,7 +107,14 @@ class Display():
 				destination = value
 			elif key == "departures":
 
-				deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
+				try:
+					deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
+				except ValueError as e:
+					logging.error("Can't handle", e)
+					logging.error("Deps ", deps)
+					print("Can't handle", e)
+					print("Deps: ", deps)
+
 				for item, v in deps.items():
 					print(item, v['line'], v['time'])
 
