@@ -84,15 +84,16 @@ class Display():
 				destination = value
 			elif key == "departures":
 
+				print("Items: ", value.items())
+				logging.debug("Items: ", value.items())
+
 				try:
 					deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
 				except ValueError as e:
 					logging.error("Can't handle", e)
 					logging.error("Deps: ", deps)
-					logging.error("Items: ", value.items())
 					print("Can't handle", e)
 					print("Deps: ", deps)
-					print("Items: ", value.items())
 
 				for item, v in deps.items():
 					print(item, v['line'], v['time'])
