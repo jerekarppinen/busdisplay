@@ -66,6 +66,18 @@ class Display():
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
 		r = requests.get(url='http://localhost/api.php?id=1491123') # 1201134 itämerenkatu 1491123 humalniementie
 		data = r.json()
+		# try:
+		# 	data = r.json()
+		# except ValueError as verr:
+		# 	error = True
+		# 	print("Value Error: " + str(verr))
+
+		# if error is True:
+		# 	self.txt.insert('1.0', "Theres an error" + '\n', "toolate")
+		# 	self.main.after(10000, self.update_txt)
+
+		# else:
+
 
 		self.txt.configure(background='black')
 
@@ -77,7 +89,9 @@ class Display():
 		self.txt.delete("1.0", "end")
 
 		for key, value in data.items():
-			print(key, value);
+			
+			print("Key: " + key, "Value: " + value);
+
 			if key == "stopname":
 				stopName = value
 			elif key == "destination":
@@ -87,13 +101,8 @@ class Display():
 				print("Items: ", value.items())
 				logging.debug("Items: ", value.items())
 
-				try:
-					deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
-				except ValueError as e:
-					logging.error("Can't handle", e)
-					logging.error("Deps: ", deps)
-					print("Can't handle", e)
-					print("Deps: ", deps)
+			
+				deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
 
 				for item, v in deps.items():
 					print(item, v['line'], v['time'])

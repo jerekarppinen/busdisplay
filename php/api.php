@@ -10,7 +10,13 @@ $times = array();
 
 $i = 10;
 
-foreach($client->getNextDepartures($_GET['id']) as $departure) {
+$nextDepartures = $client->getNextDepartures($id);
+
+$fp = fopen('results.json', 'w');
+fwrite($fp, json_encode($nextDepartures));
+fclose($fp);
+
+foreach($nextDepartures as $departure) {
 
 	$destination = $departure->dest;
 	$line = $departure->line;
