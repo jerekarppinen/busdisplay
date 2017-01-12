@@ -89,8 +89,8 @@ class Display():
 		self.txt.delete("1.0", "end")
 
 		for key, value in data.items():
-			
-			print("Key: " + key, "Value: " + value);
+
+			print("Key: " + str(key), "Value: " + str(value));
 
 			if key == "stopname":
 				stopName = value
