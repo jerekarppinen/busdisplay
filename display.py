@@ -91,7 +91,7 @@ class Display():
 
 			for key, value in data.items():
 
-				print("Key: " + str(key), "Value: " + str(value));§
+				print("Key: " + str(key), "Value: " + str(value))
 
 				if key == "stopname":
 					stopName = value
