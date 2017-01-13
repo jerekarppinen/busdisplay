@@ -66,86 +66,87 @@ class Display():
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
 		r = requests.get(url='http://localhost/api.php?id=1491123') # 1201134 itämerenkatu 1491123 humalniementie
 		data = r.json()
-		# try:
-		# 	data = r.json()
-		# except ValueError as verr:
-		# 	error = True
-		# 	print("Value Error: " + str(verr))
+		try:
+			data = r.json()
+		except ValueError as verr:
+			error = True
+			print("Value Error: " + str(verr))
 
-		# if error is True:
-		# 	self.txt.insert('1.0', "Theres an error" + '\n', "toolate")
-		# 	self.main.after(10000, self.update_txt)
+		if error is True:
+			self.txt.insert('1.0', "Theres an error" + '\n', "toolate")
+			self.txt.insert('1.0', "Backend returned: " + str(data) + '\n', "toolate")
+			self.main.after(10000, self.update_txt)
 
-		# else:
-
-
-		self.txt.configure(background='black')
-
-		self.txt.tag_configure("makehaste", foreground="yellow")
-		self.txt.tag_configure("toolate", foreground="red")
-		self.txt.tag_configure("future", foreground="white")
-		self.txt.tag_configure("title", foreground="lightgreen")
-
-		self.txt.delete("1.0", "end")
-
-		for key, value in data.items():
-
-			print("Key: " + str(key), "Value: " + str(value));
-
-			if key == "stopname":
-				stopName = value
-			elif key == "destination":
-				destination = value
-			elif key == "departures":
-
-				print("Items: ", value.items())
-				logging.debug("Items: ", value.items())
-
-			
-				deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
-
-				for item, v in deps.items():
-					print(item, v['line'], v['time'])
-
-					line = "(" + v['line'] + ")"
-					time = v['time']
-
-					logging.info('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
+		else:
 
 
-					print('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
+			self.txt.configure(background='black')
 
-					deltaTimeInMinutes = self.getDeltaTimeInMinutes(time)
-					logging.debug('DeltaTimeInMinutes: ' + str(deltaTimeInMinutes))
+			self.txt.tag_configure("makehaste", foreground="yellow")
+			self.txt.tag_configure("toolate", foreground="red")
+			self.txt.tag_configure("future", foreground="white")
+			self.txt.tag_configure("title", foreground="lightgreen")
 
-					# make waiting times over 60 minutes look prettier on the screen
-					if deltaTimeInMinutes >= 60:
+			self.txt.delete("1.0", "end")
 
-						over60 = str(timedelta(minutes=deltaTimeInMinutes))
-						over60List = over60.split(":")
-						over60ListMinutes = str(over60List[1])
+			for key, value in data.items():
 
-						if len(over60ListMinutes) == 2 and over60ListMinutes[0] == "0":
-							over60ListMinutes = over60ListMinutes[1]
+				print("Key: " + str(key), "Value: " + str(value));§
 
-						deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
+				if key == "stopname":
+					stopName = value
+				elif key == "destination":
+					destination = value
+				elif key == "departures":
 
-					if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
-						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
-					elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
-						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
-					elif deltaTimeInMinutes < 60:
-						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
-					else:
-						self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
+					print("Items: ", value.items())
+					logging.debug("Items: ", value.items())
 
-				print('\n')
-				self.txt.update_idletasks()
-				self.main.after(30000, self.update_txt)
+				
+					deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
 
-		import config
-		if config.showStopAndDestination == 1:
-			self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n', "title")
+					for item, v in deps.items():
+						print(item, v['line'], v['time'])
+
+						line = "(" + v['line'] + ")"
+						time = v['time']
+
+						logging.info('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
+
+
+						print('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
+
+						deltaTimeInMinutes = self.getDeltaTimeInMinutes(time)
+						logging.debug('DeltaTimeInMinutes: ' + str(deltaTimeInMinutes))
+
+						# make waiting times over 60 minutes look prettier on the screen
+						if deltaTimeInMinutes >= 60:
+
+							over60 = str(timedelta(minutes=deltaTimeInMinutes))
+							over60List = over60.split(":")
+							over60ListMinutes = str(over60List[1])
+
+							if len(over60ListMinutes) == 2 and over60ListMinutes[0] == "0":
+								over60ListMinutes = over60ListMinutes[1]
+
+							deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
+
+						if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
+							self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+						elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
+							self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+						elif deltaTimeInMinutes < 60:
+							self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
+						else:
+							self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
+
+					print('\n')
+					self.txt.update_idletasks()
+					self.main.after(30000, self.update_txt)
+
+			import config
+			if config.showStopAndDestination == 1:
+				self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n', "title")
 
 if __name__ == '__main__':
 	import tkinter

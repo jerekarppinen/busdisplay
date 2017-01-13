@@ -12,9 +12,9 @@ $i = 10;
 
 $nextDepartures = $client->getNextDepartures($id);
 
-$fp = fopen('results.json', 'w');
-fwrite($fp, json_encode($nextDepartures));
-fclose($fp);
+// $fp = fopen('results.json', 'w');
+// fwrite($fp, json_encode($nextDepartures));
+// fclose($fp);
 
 foreach($nextDepartures as $departure) {
 
