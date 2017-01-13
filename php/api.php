@@ -10,6 +10,8 @@ $times = array();
 
 $i = 10;
 
+// $id = "1491123";
+
 $nextDepartures = $client->getNextDepartures($id);
 
 // $fp = fopen('results.json', 'w');

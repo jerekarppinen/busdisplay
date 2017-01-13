@@ -64,8 +64,9 @@ class Display():
 		return h
 
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
+
+		error = False
 		r = requests.get(url='http://localhost/api.php?id=1491123') # 1201134 itämerenkatu 1491123 humalniementie
-		data = r.json()
 		try:
 			data = r.json()
 		except ValueError as verr:
@@ -74,7 +75,6 @@ class Display():
 
 		if error is True:
 			self.txt.insert('1.0', "Theres an error" + '\n', "toolate")
-			self.txt.insert('1.0', "Backend returned: " + str(data) + '\n', "toolate")
 			self.main.after(10000, self.update_txt)
 
 		else:
