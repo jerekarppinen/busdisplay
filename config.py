@@ -1,1 +1,2 @@
 showStopAndDestination=0
+waitUntilNextFullMinute=1

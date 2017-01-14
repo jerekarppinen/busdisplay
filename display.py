@@ -4,6 +4,7 @@ from datetime import timedelta
 import time
 import collections
 import logging
+import config
 
 class Display():
 	def __init__(self):
@@ -22,8 +23,9 @@ class Display():
 
 		self.main.after(0, self.update_txt)
 
-		#sleep until next starting minute
-		self.sleepUntilNextMinute()
+		if config.waitUntilNextFullMinute == 1:
+			#sleep until next starting minute
+			self.sleepUntilNextMinute()
 
 		self.main.mainloop()
 
@@ -63,24 +65,40 @@ class Display():
 
 		return h
 
+	def getPossibleError(self, r):
+
+		data = []
+		error = None
+
+		if r.status_code != requests.codes.ok:
+			error = "Status code returned: " + str(r.status_code)
+
+		if error is None:
+			try:
+				data = r.json()
+			except ValueError as verr:
+				error = "Value Error: " + str(verr)
+
+		if error is None and len(data) > 0:
+			try:
+				self.items = data.items()
+			except ValueError as verr:
+				error = "Value Error: " + str(verr)
+
+		if len(data) == 0:
+			error = "Empty object returned"
+
+		return error
+
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
 
 		error = False
 		r = requests.get(url='http://localhost/api.php?id=1491123') # 1201134 itämerenkatu 1491123 humalniementie
-		try:
-			data = r.json()
-		except ValueError as verr:
-			error = True
-			print("Value Error: " + str(verr))
 
-		try:
-			items = data.items()
-		except ValueError as verr:
-			error = True
-			print("Value Error: " + str(verr))
+		error = self.getPossibleError(r)
 
-		if error is True:
-			self.txt.insert('1.0', "Theres an error" + '\n', "toolate")
+		if error is not None:
+			self.txt.insert('1.0', error + '\n', "toolate")
 			self.main.after(10000, self.update_txt)
 
 		else:
@@ -95,7 +113,7 @@ class Display():
 
 			self.txt.delete("1.0", "end")
 
-			for key, value in items:
+			for key, value in self.items:
 
 				print("Key: " + str(key), "Value: " + str(value))
 
@@ -150,7 +168,6 @@ class Display():
 					self.txt.update_idletasks()
 					self.main.after(30000, self.update_txt)
 
-			import config
 			if config.showStopAndDestination == 1:
 				self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n', "title")
 
