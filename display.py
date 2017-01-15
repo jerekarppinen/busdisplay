@@ -101,6 +101,11 @@ class Display():
 			self.txt.insert('1.0', error + '\n', "toolate")
 			self.main.after(10000, self.update_txt)
 
+		for key, value in self.items:
+			if len(value) == 0 or value is None:
+				self.txt.insert('1.0', error + '\n', "toolate")
+				self.main.after(10000, self.update_txt)
+
 		else:
 
 
@@ -116,6 +121,7 @@ class Display():
 			for key, value in self.items:
 
 				print("Key: " + str(key), "Value: " + str(value))
+
 
 				if key == "stopname":
 					stopName = value
