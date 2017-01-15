@@ -88,6 +88,12 @@ class Display():
 		if len(data) == 0:
 			error = "Empty object returned"
 
+		if error is None:
+			for key, value in self.items:
+				if key == "departures":
+					if len(value) == 0 or value is None:
+						error = "Empty list of departures returned"
+
 		return error
 
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
@@ -101,10 +107,6 @@ class Display():
 			self.txt.insert('1.0', error + '\n', "toolate")
 			self.main.after(10000, self.update_txt)
 
-		for key, value in self.items:
-			if len(value) == 0 or value is None:
-				self.txt.insert('1.0', error + '\n', "toolate")
-				self.main.after(10000, self.update_txt)
 
 		else:
 
