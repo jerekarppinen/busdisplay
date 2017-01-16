@@ -130,10 +130,6 @@ class Display():
 				elif key == "destination":
 					destination = value
 				elif key == "departures":
-
-					print("Items: ", value.items())
-					logging.debug("Items: ", value.items())
-
 				
 					deps = collections.OrderedDict(reversed(sorted(value.items()))) # data from backend arrives in right order but for some reason it gets printed on UI reversed, so need to reverse it again to counter this
 
