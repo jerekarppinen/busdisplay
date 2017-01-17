@@ -6,9 +6,9 @@
 
 ## Development Environment
 
-- Developed with Python 3.x
+- Developed with Python 3.x (should install python3-tk to get Tkinter)
 
-- Run docker commands which are in docker-commands.txt and you will get crawler.php running
+- Run docker commands which are in docker-commands.txt and you will get api.php running
 
 - Run: python3 display.py, the gui will start in next full minute (to properly refresh the view every new minute and 30s past)
 
