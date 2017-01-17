@@ -59,7 +59,7 @@ class Display():
 		minutes = (busDateTime - now).seconds / 60
 		h = int(round(minutes))
 
-		# if it is close enough to present time, h validates to over 1000 for some reason
+		# if it is close enough to present time, h resolves to over 1000 for some reason
 		if h > 1000:
 		  return 0
 
