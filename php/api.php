@@ -1,6 +1,6 @@
 <?php
 
-if(isset($_GET['id']) && is_numeric($_GET['id'])) {
+if(isset($_GET['id'])) {
 	$id = $_GET['id'];
 }
 
@@ -14,10 +14,6 @@ $i = 10;
 
 $nextDepartures = $client->getNextDepartures($id);
 
-// $fp = fopen('results.json', 'w');
-// fwrite($fp, json_encode($nextDepartures));
-// fclose($fp);
-
 foreach($nextDepartures as $departure) {
 
 	$destination = $departure->dest;
@@ -28,9 +24,6 @@ foreach($nextDepartures as $departure) {
 	$timeStrippedSeconds = substr($time, 0, -3);
 
 	$time = $timeStrippedSeconds;
-
-	$timeWithoutChars = str_replace(":", "", $time);
-	$timeAsInteger = intval($timeWithoutChars);
 
 	$times[$i] = array("line" => $line, "time" => $time);
 
@@ -45,7 +38,5 @@ $wrapper['destination'] = $destination;
 $wrapper['departures'] = $times;
 
 echo(json_encode($wrapper));
-
-
 
 ?>
