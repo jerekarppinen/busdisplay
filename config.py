@@ -1,3 +1,3 @@
 showStopAndDestination=0
 waitUntilNextFullMinute=1
-busId=1491123
+stopId=1491123
