@@ -1,4 +1,5 @@
 from time import sleep
+from time import gmtime, strftime
 from datetime import datetime
 from datetime import timedelta
 import time
@@ -70,6 +71,8 @@ class Display():
 		data = []
 		error = None
 
+		currentTime = strftime("%H:%M:%S", gmtime())
+
 		if r.status_code != requests.codes.ok:
 			error = "Status code returned: " + str(r.status_code)
 
@@ -92,14 +95,14 @@ class Display():
 			for key, value in self.items:
 				if key == "departures":
 					if len(value) == 0 or value is None:
-						error = "Empty list of departures returned"
+						error = currentTime + " Empty response"
 
 		return error
 
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
 
 		error = False
-		r = requests.get(url='http://localhost/api.php?id=' + str(config.stopId)) # 1201134 itämerenkatu 1491123 humalniementie
+		r = requests.get(url='http://54.187.72.240/api.php?id=' + str(config.stopId)) # 1201134 itämerenkatu 1491123 humalniementie
 
 		error = self.getPossibleError(r)
 
@@ -121,8 +124,8 @@ class Display():
 			self.txt.delete("1.0", "end")
 
 			for key, value in self.items:
-
-				print("Key: " + str(key), "Value: " + str(value))
+				key = str(key)
+				print("Key: " + key, "Value: " + str(value))
 
 
 				if key == "stopname":
