@@ -1,5 +1,6 @@
 from time import sleep
 from time import gmtime, strftime
+from pytz import timezone
 from datetime import datetime
 from datetime import timedelta
 import time
@@ -71,7 +72,12 @@ class Display():
 		data = []
 		error = None
 
-		currentTime = strftime("%H:%M:%S", gmtime())
+		now_utc = datetime.now(timezone('UTC'))
+		now_helsinki = now_utc.astimezone(timezone('Europe/Helsinki'))
+		fmt = "%H:%M:%S"
+		currentTime = now_helsinki.strftime(fmt)
+
+		
 
 		if r.status_code != requests.codes.ok:
 			error = "Status code returned: " + str(r.status_code)
@@ -95,7 +101,7 @@ class Display():
 			for key, value in self.items:
 				if key == "departures":
 					if len(value) == 0 or value is None:
-						error = currentTime + " Empty response"
+						error = str(currentTime) + " Empty response"
 
 		return error
 
