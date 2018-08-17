@@ -23,12 +23,13 @@ foreach($array as $item) {
 		$headsign = $st['headsign'];
 		$serviceDay = $st['serviceDay'];
 
-		$times[$i++] = ['line' => 89, 'time' => date("H:i:s", $serviceDay + $arrival)];
+		$times[] = ['line' => '89', 'time' => date("H:i", $serviceDay + $arrival)];
 	}
 }
 
 $wrapper = [];
 $wrapper['stopname'] = 'Yliskylänkaari';
 $wrapper['departures'] = $times;
+$wrapper['destination'] = 'Herttoniemi';
 
 echo json_encode($wrapper);
