@@ -8,6 +8,7 @@ import collections
 import logging
 import config
 
+
 class Display():
 	def __init__(self):
 
@@ -77,8 +78,6 @@ class Display():
 		fmt = "%H:%M:%S"
 		currentTime = now_helsinki.strftime(fmt)
 
-		
-
 		if r.status_code != requests.codes.ok:
 			error = "Status code returned: " + str(r.status_code)
 
@@ -108,7 +107,7 @@ class Display():
 	def update_txt(self, event = None): # base logic for update_txt function inspired by https://www.reddit.com/r/learnpython/comments/2rpk0k/how_to_update_your_gui_in_tkinter_after_using/
 
 		error = False
-		r = requests.get(url='http://54.187.72.240/api.php?id=' + str(config.stopId)) # 1201134 itämerenkatu 1491123 humalniementie
+		r = requests.get(url='http://192.168.1.199:8080/api.php')
 		data = r.json()
 
 		error = self.getPossibleError(r)
@@ -133,9 +132,8 @@ class Display():
 			destination = data['destination']
 			departures = data['departures']
 
-
-			
 			for departure in reversed(departures):
+
 				time = departure['time']
 				line = "(" + departure['line'] + ")"
 
