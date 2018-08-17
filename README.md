@@ -23,3 +23,6 @@
 - Open /etc/lightdm/lightdm.conf
 - Look for the line #xserver-command=X. Change it to xserver-command=X -s 0 dpms
 - Save and reboot.
+
+## Use this to dim and bright the screen if necessary
+- https://github.com/linusg/rpi-backlight
