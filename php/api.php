@@ -1,42 +1,34 @@
 <?php
+declare(strict_types=1);
+date_default_timezone_set('Europe/Helsinki');
 
-if(isset($_GET['id'])) {
-	$id = $_GET['id'];
-}
+$json = exec('sh graphql-yliskylantie.sh');
 
-$client = new SoapClient("http://omatlahdot.hkl.fi/interfaces/kamo?wsdl");
+$array = json_decode($json, true);
 
-$times = array();
-
+$times = [];
 $i = 10;
 
-// $id = "1491123";
+foreach($array as $item) {
+	$stop = $item['stop'];
+	$stoptimesWithoutPatterns = $item['stop']['stoptimesWithoutPatterns'];
+	foreach($stoptimesWithoutPatterns as $st) {
+		$realtimeArrival = $st['realtimeArrival'];
+		$scheduledArrival = $st['scheduledArrival'];
+		$arrival = $scheduledArrival;
+		if ($st['realtime'] === true) {
+			$arrival = $realtimeArrival;
+		}
 
-$nextDepartures = $client->getNextDepartures($id);
+		$headsign = $st['headsign'];
+		$serviceDay = $st['serviceDay'];
 
-foreach($nextDepartures as $departure) {
-
-	$destination = $departure->dest;
-	$line = $departure->line;
-	$stopName = $departure->stopname;
-	$time = $departure->time;
-
-	$timeStrippedSeconds = substr($time, 0, -3);
-
-	$time = $timeStrippedSeconds;
-
-	$times[$i] = array("line" => $line, "time" => $time);
-
-	$i++;
-
+		$times[$i++] = ['line' => 89, 'time' => date("H:i:s", $serviceDay + $arrival)];
+	}
 }
 
-$wrapper = array();
-
-$wrapper['stopname'] = $stopName;
-$wrapper['destination'] = $destination;
+$wrapper = [];
+$wrapper['stopname'] = 'Yliskylänkaari';
 $wrapper['departures'] = $times;
 
-echo(json_encode($wrapper));
-
-?>
+echo json_encode($wrapper);
