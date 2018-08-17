@@ -17,3 +17,9 @@
 - python3 test.py
 
 ![Alt text](https://lh4.googleusercontent.com/UShVY3TQwLorsZLGTjlmIY7n8OJgs15tZNEG2PlkkNPX383Rie30AxsdMuaSGCzb4RQ8cDtF7qXEOBk=w2880-h1510-rw "Raspberry Project")
+
+## Keep screen on
+
+- Open /etc/lightdm/lightdm.conf
+- Look for the line #xserver-command=X. Change it to xserver-command=X -s 0 dpms
+- Save and reboot.
