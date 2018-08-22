@@ -22,8 +22,9 @@ foreach($array as $item) {
 
 		$headsign = $st['headsign'];
 		$serviceDay = $st['serviceDay'];
+		$bus = $st['trip']['route']['shortName'];
 
-		$times[] = ['line' => '89', 'time' => date("H:i", $serviceDay + $arrival)];
+		$times[] = ['line' => $bus, 'time' => date("H:i", $serviceDay + $arrival)];
 	}
 }
 
