@@ -5,6 +5,11 @@ curl https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql \
   stop(id: "HSL:1491123") {
     name
       stoptimesWithoutPatterns {
+      trip {
+        route {
+          shortName
+        }
+      }
       scheduledArrival
       realtimeArrival
       arrivalDelay
