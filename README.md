@@ -16,7 +16,7 @@
 
 - python3 test.py
 
-![Alt text](https://lh4.googleusercontent.com/UShVY3TQwLorsZLGTjlmIY7n8OJgs15tZNEG2PlkkNPX383Rie30AxsdMuaSGCzb4RQ8cDtF7qXEOBk=w2880-h1510-rw "Raspberry Project")
+![Alt text](https://github.com/jerekarppinen/busdisplay/blob/development/bussiaikataulu.jpg?raw=true "Raspberry Project")
 
 ## Keep screen on
 
