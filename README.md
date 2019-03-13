@@ -4,6 +4,8 @@
 
 - The purpose is to display next departing times for buses near my place, I run this on Raspberry Pi 7" touch screen
 
+<img width="250" src="https://github.com/jerekarppinen/busdisplay/blob/development/bussiaikataulu.jpg?raw=true">	
+
 ## Development Environment
 
 - Developed with Python 3.x (should install python3-tk to get Tkinter)
@@ -15,8 +17,6 @@
 ## Testing
 
 - python3 test.py
-
-![Alt text](https://github.com/jerekarppinen/busdisplay/blob/development/bussiaikataulu.jpg?raw=true "Raspberry Project")
 
 ## Keep screen on
 
