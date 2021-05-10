@@ -129,18 +129,19 @@ class Display():
 			self.txt.delete("1.0", "end")
 
 			stopName = data['stopname']
-			destination = data['destination']
 			departures = data['departures']
 
 			for departure in reversed(departures):
 
+
+				destination = departure['destination']
 				time = departure['time']
-				line = "(" + departure['line'] + ")"
+				line =  "(" + departure['line'] + ")"
 
-				logging.info('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
+				# logging.info('Destination: ' + () + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
 
 
-				print('Destination: ' + (destination) + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
+				# print('Destination: ' + () + ', Line: ' + line + ', Stopname: ' + stopName + ', Time: ' + time)
 
 				deltaTimeInMinutes = self.getDeltaTimeInMinutes(time)
 				logging.debug('DeltaTimeInMinutes: ' + str(deltaTimeInMinutes))
@@ -157,21 +158,26 @@ class Display():
 
 					deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
 
+				arrow = "------>"
+
+				if len(destination) == 10:
+					arrow = "--------------->"
+
 				if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
-					self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
 				elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
-					self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
 				elif deltaTimeInMinutes < 60:
-					self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInMinutes) + " min" + '\n', "future")
+					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "future")
 				else:
-					self.txt.insert('1.0', time + " " + line + " ------> " + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
+					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
 
 			print('\n')
 			self.txt.update_idletasks()
-			self.main.after(30000, self.update_txt)
+			self.main.after(30000, self.update_txt)	
 
-	if config.showStopAndDestination == 1:
-		self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n', "title")
+	# if config.showStopAndDestination == 1:
+	# 	self.txt.insert('1.0', stopName + '  --------------->  ' + destination +  '\n', "title")
 
 if __name__ == '__main__':
 	import tkinter

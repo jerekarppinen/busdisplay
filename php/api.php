@@ -1,36 +1,36 @@
 <?php
 declare(strict_types=1);
-date_default_timezone_set('Europe/Helsinki');
 
-$json = exec('sh graphql-yliskylantie.sh');
+$json = exec('sh graphql-kivisto.sh');
 
 $array = json_decode($json, true);
 
+$station = $array['data']['station']['name'];
+$zone = $array['data']['station']['zoneId'];
+
+$stopTimes = $array['data']['station']['stoptimesWithoutPatterns'];
+
 $times = [];
-$i = 10;
 
-foreach($array as $item) {
-	$stop = $item['stop'];
-	$stoptimesWithoutPatterns = $item['stop']['stoptimesWithoutPatterns'];
-	foreach($stoptimesWithoutPatterns as $st) {
-		$realtimeArrival = $st['realtimeArrival'];
-		$scheduledArrival = $st['scheduledArrival'];
-		$arrival = $scheduledArrival;
-		if ($st['realtime'] === true) {
-			$arrival = $realtimeArrival;
-		}
+foreach($stopTimes as $stopTime) {
+	$realtimeArrival = $stopTime['realtimeArrival'];
+	$scheduledArrival = $stopTime['scheduledArrival'];
 
-		$headsign = $st['headsign'];
-		$serviceDay = $st['serviceDay'];
-		$bus = $st['trip']['route']['shortName'];
+	$arrival = $scheduledArrival;
 
-		$times[] = ['line' => $bus, 'time' => date("H:i", $serviceDay + $arrival)];
+	$headsign = $stopTime['headsign'];
+	$train = $stopTime['trip']['route']['shortName'];
+
+	if ($stopTime['realtime'] === true) {
+		$arrival = $realtimeArrival;
 	}
+
+	$times[] = ['line' => $train, 'time' => date("H:i", $serviceDay + $arrival), 'destination' => $headsign];
 }
 
+
 $wrapper = [];
-$wrapper['stopname'] = 'Yliskylänkaari';
+$wrapper['stopname'] = $station;
 $wrapper['departures'] = $times;
-$wrapper['destination'] = 'Herttoniemi';
 
 echo json_encode($wrapper);
