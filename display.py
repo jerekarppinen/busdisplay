@@ -158,10 +158,10 @@ class Display():
 
 					deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
 
-				arrow = "  ------>  "
+				arrow = " -> "
 
 				if len(destination) == 8:
-					arrow = "             ------>  "
+					arrow = " -> "
 
 				if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
 					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
