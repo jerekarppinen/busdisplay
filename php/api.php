@@ -16,6 +16,7 @@ $times = [];
 foreach($stopTimes as $stopTime) {
 	$realtimeArrival = $stopTime['realtimeArrival'];
 	$scheduledArrival = $stopTime['scheduledArrival'];
+	$serviceDay = $stopTime['serviceDay'];
 
 	$arrival = $scheduledArrival;
 
