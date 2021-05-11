@@ -158,19 +158,19 @@ class Display():
 
 					deltaTimeInHoursAndMinutes = str(over60List[0]) + " h " + over60ListMinutes
 
-				arrow = " -> "
+				empty_space = "    "
 
 				if len(destination) == 8:
-					arrow = " --------> "
+					empty_space = "           "
 
 				if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
-					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
+					self.txt.insert('1.0', time + " " + destination + " " + line + empty_space + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
 				elif deltaTimeInMinutes > 2 and deltaTimeInMinutes <= 5:
-					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
+					self.txt.insert('1.0', time + " " + destination + " " + line + empty_space + str(deltaTimeInMinutes) + " min" + '\n', "makehaste")
 				elif deltaTimeInMinutes < 60:
-					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "future")
+					self.txt.insert('1.0', time + " " + destination + " " + line + empty_space + str(deltaTimeInMinutes) + " min" + '\n', "future")
 				else:
-					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
+					self.txt.insert('1.0', time + " " + destination + " " + line + empty_space + str(deltaTimeInHoursAndMinutes) + " min" + '\n', "future")
 
 			print('\n')
 			self.txt.update_idletasks()
