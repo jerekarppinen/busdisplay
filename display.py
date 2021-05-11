@@ -161,7 +161,7 @@ class Display():
 				empty_space = "          "
 
 				if len(destination) == 8:
-					empty_space = "                  "
+					empty_space = "                 "
 
 				if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
 					self.txt.insert('1.0', time + " " + destination + " " + line + empty_space + str(deltaTimeInMinutes) + " min" + '\n', "toolate")
