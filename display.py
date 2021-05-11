@@ -160,8 +160,8 @@ class Display():
 
 				arrow = "------>"
 
-				if len(destination) == 10:
-					arrow = "--------------->"
+				if len(destination) == 8:
+					arrow = "------------>"
 
 				if deltaTimeInMinutes >= 0 and deltaTimeInMinutes <= 2:
 					self.txt.insert('1.0', time + " " + destination + " " + line + arrow + str(deltaTimeInMinutes) + " min" + '\n', "toolate")

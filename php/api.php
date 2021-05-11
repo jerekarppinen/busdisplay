@@ -13,6 +13,13 @@ $stopTimes = $array['data']['station']['stoptimesWithoutPatterns'];
 
 $times = [];
 
+function getDestination($headSign) {
+	if(strpos($headSign, "Helsinki") > -1) {
+		return "Helsinki";
+	}
+	return $headSign;
+}
+
 foreach($stopTimes as $stopTime) {
 	$realtimeArrival = $stopTime['realtimeArrival'];
 	$scheduledArrival = $stopTime['scheduledArrival'];
@@ -20,7 +27,7 @@ foreach($stopTimes as $stopTime) {
 
 	$arrival = $scheduledArrival;
 
-	$headsign = $stopTime['headsign'];
+	$headsign = getDestination($stopTime['headsign']);
 	$train = $stopTime['trip']['route']['shortName'];
 
 	if ($stopTime['realtime'] === true) {
