@@ -17,6 +17,9 @@ function getDestination($headSign) {
 	if(strpos($headSign, "Helsinki") > -1) {
 		return "Helsinki";
 	}
+	if(strpos($headSign, "Tikkurila") > -1) {
+		return "Tikkurila";
+	}
 	return $headSign;
 }
 
