@@ -12,7 +12,7 @@ import config
 class Display():
 	def __init__(self):
 
-		logging.basicConfig(filename='display.log',level=logging.DEBUG)
+		logging.basicConfig(level=logging.DEBUG)
 		logging.info('\n\n')
 
 		self.main = tkinter.Tk()
