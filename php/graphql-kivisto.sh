@@ -1,5 +1,6 @@
-curl https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql \
+curl https://api.digitransit.fi/routing/v2/hsl/gtfs/v1 \
 -H "Content-Type: application/graphql" \
+-H "digitransit-subscription-key: xxx" \
 -d @- << DATA
 {
   station(id: "HSL:4000211") {
